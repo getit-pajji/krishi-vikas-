@@ -135,7 +135,7 @@
                         <section id="market-prices-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="market_prices">Market Price Analyzer</h2><canvas id="marketChart"></canvas></section>
                         <section id="crop-quality-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="crop_quality_history">Crop Quality History</h2><canvas id="qualityChart"></canvas></section>
                         <section id="order-supplies-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="order_supplies">Order Supplies</h2><p class="text-gray-600 mb-4" data-lang-key="order_supplies_desc">Get government-rate fertilizers & pesticides.</p><button id="place-order-btn" class="w-full btn-primary" data-lang-key="place_order">Place an Order</button></section>
-                        <section id="ai-assistant-call-section" class="dashboard-card p-6 text-center"><h2 class="text-xl font-semibold mb-3" data-lang-key="ai_assistant_title">Talk to Krishi Rakshak Assistant</h2><p class="text-gray-600 mb-4" data-lang-key="ai_assistant_desc">Get instant voice advice on your farm's data.</p><button id="retell-web-call-button" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8h-1a6 6 0 11-12 0H3a7.001 7.001 0 006 6.93V17H7a1 1 0 100 2h6a1 1 0 100-2h-2v-2.07z" clip-rule="evenodd" /></svg><span data-lang-key="call_assistant_button">Call Assistant from Browser</span></button></section>
+                        <section id="ai-assistant-call-section" class="dashboard-card p-6 text-center"><h2 class="text-xl font-semibold mb-3" data-lang-key="ai_assistant_title">Talk to Krishi Rakshak Assistant</h2><p class="text-gray-600 mb-4" data-lang-key="ai_assistant_desc">Get instant voice advice on your farm's data.</p><button id="retell-web-call-button" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8h-1a6 6 0 11-12 0H3a7.001 7.001 0 006 6.93V17H7a1 1 0 100 2h6a1 1 0 100-2h-2v-2.07z" clip-rule="evenodd" /></svg><span data-lang-key="call_assistant_button">Call Assistant from Browser</span></button><p id="call-status" class="text-sm text-gray-500 mt-2 h-5"></p></section>
                         <section id="nearby-kendras-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="nearby_kendras">Nearby Krishi Kendras</h2><ul class="space-y-3"><li class="p-3 bg-gray-50 rounded-lg"><p class="font-semibold">Central Institute for Cotton Research</p><p class="text-sm text-gray-600">5 km away - Nagpur</p></li><li class="p-3 bg-gray-50 rounded-lg"><p class="font-semibold">Panjabrao Deshmukh Krishi Vidyapeeth</p><p class="text-sm text-gray-600">12 km away - Akola</p></li></ul></section>
                         <section id="sustainability-section" class="dashboard-card p-6 overflow-hidden"><h2 class="text-xl font-semibold mb-3" data-lang-key="sustainability_corner">Sustainability Corner</h2><div id="sustainability-slider" class="relative"><div class="sustainability-slide"><h3 class="font-bold text-lg mb-2" data-lang-key="slide1_title">Factory Solutions for Crop Waste</h3><p class="text-gray-600 mb-4" data-lang-key="slide1_desc">Instead of burning, crop waste can be converted into bricks, biogas, and fertilizer.</p><a href="https://youtu.be/JP4ob9RVklo?feature=shared" target="_blank" rel="noopener noreferrer" class="font-bold text-green-600 hover:underline" data-lang-key="learn_more">Learn More &raquo;</a></div><div class="sustainability-slide hidden"><h3 class="font-bold text-lg mb-2" data-lang-key="slide2_title">Best Outcome Crops for Your Land</h3><p class="text-gray-600 mb-4" data-lang-key="slide2_desc">Based on your soil type (Black Cotton), crops like Cotton and Soybean have historically shown the best yields.</p></div></div><div class="flex justify-end space-x-2 mt-4"><button id="sustainability-prev-btn" class="bg-gray-200 p-2 rounded-full" aria-label="Previous slide">&lt;</button><button id="sustainability-next-btn" class="bg-gray-200 p-2 rounded-full" aria-label="Next slide">&gt;</button></div></section>
                         <section id="crop-health-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="crop_health_analysis">Crop Health Analysis</h2><div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><div class="lg:col-span-1 border-r-0 lg:border-r lg:pr-6 border-gray-200"><h3 class="font-semibold text-lg text-gray-800" data-lang-key="free_analysis">Free Photo Analysis</h3><p class="text-gray-600 mb-4 text-sm" data-lang-key="free_analysis_desc">Get a basic health check by uploading a photo of your crop.</p><div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center"><svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><label for="farmer-file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none"><span data-lang-key="upload_field_image">Upload field image</span><input id="farmer-file-upload" name="farmer-file-upload" type="file" class="sr-only"></label></div><button onclick="handleImageAnalysis('farmer')" class="mt-4 w-full bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-700" data-lang-key="get_free_analysis">Get Free Analysis</button></div><div class="lg:col-span-2"><h3 class="font-semibold text-lg text-green-700 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 2a1 1 0 00-1 1v1.118a2 2 0 00-1.78 1.14l-1 2A1 1 0 002 9h16a1 1 0 00.78-1.742l-1-2A2 2 0 0016 4.118V3a1 1 0 00-1-1H5zm12 8H3a1 1 0 00-1 1v6a1 1 0 001 1h14a1 1 0 001-1v-6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg><span data-lang-key="upgrade_for_scan">Upgrade for Hyperspectral Scan</span></h3><p class="text-gray-600 mb-4 text-sm" data-lang-key="upgrade_desc">Get detailed insights on soil health, water stress, and disease prediction.</p><div class="flex flex-col md:flex-row gap-4"><div class="flex-1 p-4 border border-gray-300 rounded-lg bg-white text-center"><h4 class="font-bold text-md" data-lang-key="single_scan">Single Field Scan</h4><p class="text-3xl font-bold my-2">₹93</p><p class="text-sm text-gray-500 mb-4" data-lang-key="single_scan_desc">One-time detailed analysis of your entire field.</p><button id="buy-scan-btn" class="w-full btn-primary" data-lang-key="buy_now">Buy for ₹93</button></div><div class="flex-1 p-4 border-2 border-green-500 rounded-lg bg-green-50 text-center relative"><span class="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg" data-lang-key="best_value">BEST VALUE</span><h4 class="font-bold text-md" data-lang-key="monthly_plan">Monthly Plan</h4><p class="text-3xl font-bold my-2">₹250<span class="text-lg font-normal text-gray-600">/mo</span></p><p class="text-sm text-gray-500 mb-4" data-lang-key="monthly_plan_desc">1 scan per week for 4 weeks. Continuous monitoring.</p><button id="subscribe-btn" class="w-full btn-primary" data-lang-key="subscribe_now">Subscribe for ₹250/mo</button></div></div></div></div><div id="farmer-ai-response" class="mt-6 hidden bg-green-50 p-4 rounded-lg"></div></section>
@@ -177,18 +177,22 @@
 
         const translations = {
             en: { welcome_title: "Welcome to Krishi Rakshak", welcome_subtitle: "Your trusted partner in farming.", select_language: "Select Language", select_role: "I am a...", role_farmer: "Farmer", role_controller: "Controller", logout: "Logout", helpline: "Govt. Helpline:", farm_location_weather: "Farm Location & Weather", wind: "Wind:", soil_type: "Soil Type:", best_crops: "Best Crops:", market_prices: "Market Price Analyzer", order_supplies: "Order Supplies", order_supplies_desc: "Get government-rate fertilizers & pesticides.", place_order: "Place an Order", nearby_kendras: "Nearby Krishi Kendras", sustainability_corner: "Sustainability Corner", learn_more: "Learn More »", regional_farms: "Farms in 50km Radius", ai_diagnosis: "AI-Powered Diagnosis", ai_diagnosis_desc: "Upload a crop image for instant analysis and advice.", upload_file: "Upload a file", analyze_image: "Analyze Image", chatbot_title: "Krishi Sahayak", chatbot_welcome: "Hello! How can I help you today? Ask me about crops, government schemes, or weather.", crop_health_analysis: "Crop Health Analysis", free_analysis: "Free Photo Analysis", free_analysis_desc: "Get a basic health check by uploading a photo of your crop.", upload_field_image: "Upload field image", get_free_analysis: "Get Free Analysis", upgrade_for_scan: "Upgrade for Hyperspectral Scan", upgrade_desc: "Get detailed insights on soil health, water stress, and disease prediction.", single_scan: "Single Field Scan", single_scan_desc: "One-time detailed analysis of your entire field.", buy_now: "Buy for ₹93", monthly_plan: "Monthly Plan", monthly_plan_desc: "1 scan per week for 4 weeks. Continuous monitoring.", subscribe_now: "Subscribe for ₹250/mo", best_value: "BEST VALUE", slide1_title: "Factory Solutions for Crop Waste", slide1_desc: "Instead of burning, crop waste can be converted into bricks, biogas, and fertilizer.", slide2_title: "Best Outcome Crops for Your Land", slide2_desc: "Based on your soil type (Black Cotton), crops like Cotton and Soybean have historically shown the best yields.", crop_quality_history: "Crop Quality History", ai_response_title: "AI Analysis Result", ai_health_status: "Health Status", ai_disease_detection: "Disease Detection", ai_pesticide_advice: "Pesticide Advice", ai_crop_suggestion: "Crop Suggestion", farmer_dashboard_title: "Farmer Dashboard", controller_dashboard_title: "Controller Dashboard", sidebar_weather: "Location & Weather", sidebar_market: "Market Prices", sidebar_quality: "Crop Quality", sidebar_orders: "Order Supplies", sidebar_kendras: "Nearby Kendras", sidebar_sustainability: "Sustainability", sidebar_health: "Crop Health", sidebar_regional_farms: "Regional Farms", sidebar_ai_diagnosis: "AI Diagnosis", notifications: "Alerts & Notifications", sidebar_notifications: "Notifications", soil_profile: "Soil Profile Visualization (Farm #F789)", export_data: "Export Data", field_health: "Field Health & Crop Suitability", input_usage: "Water & Input Usage Tracking", sidebar_soil: "Soil Profile", sidebar_field_health: "Field Health", sidebar_input_usage: "Input Usage", order_supplies_modal_title: "Order Supplies", order_supplies_modal_body: "This feature is coming soon! You will be able to order supplies directly from here.", buy_scan_modal_title: "Buy Scan", buy_scan_modal_body: "Payment gateway integration is needed to complete this purchase.", subscribe_modal_title: "Subscribe", subscribe_modal_body: "Payment gateway integration is needed to start your subscription.",
-                ai_assistant_title: "Talk to Krishi Rakshak Assistant", ai_assistant_desc: "Get instant voice advice on your farm's data.", call_assistant_button: "Call Assistant from Browser" 
+                ai_assistant_title: "Talk to Krishi Rakshak Assistant", ai_assistant_desc: "Get instant voice advice on your farm's data.", call_assistant_button: "Call Assistant from Browser",
+                mic_request: "Requesting microphone...", mic_denied: "Microphone access denied. Please allow access in browser settings.", call_failed: "Call failed to start. Please try again.", call_in_progress: "Call in Progress..."
             },
             hi: { welcome_title: "कृषि रक्षक में आपका स्वागत है", welcome_subtitle: "खेती में आपका विश्वसनीय साथी।", select_language: "भाषा चुनें", select_role: "मैं एक...", role_farmer: "किसान", role_controller: "नियंत्रक", logout: "लॉग आउट", helpline: "सरकारी हेल्पलाइन:", farm_location_weather: "खेत का स्थान और मौसम", wind: "हवा:", soil_type: "मिट्टी का प्रकार:", best_crops: "सर्वश्रेष्ठ फसलें:", market_prices: "बाजार मूल्य विश्लेषक", order_supplies: "आपूर्ति का आदेश दें", order_supplies_desc: "सरकारी दर पर उर्वरक और कीटनाशक प्राप्त करें।", place_order: "आदेश दें", nearby_kendras: "आस-पास के कृषि केंद्र", sustainability_corner: "सस्टेनेबिलिटी कॉर्नर", learn_more: "और जानें »", regional_farms: "50 किमी के दायरे में खेत", ai_diagnosis: "एआई-संचालित निदान", ai_diagnosis_desc: "तत्काल विश्लेषण और सलाह के लिए फसल की एक छवि अपलोड करें।", upload_file: "एक फ़ाइल अपलोड करें", analyze_image: "छवि का विश्लेषण करें", chatbot_title: "कृषि सहायक", chatbot_welcome: "नमस्ते! मैं आज आपकी कैसे मदद कर सकता हूँ? मुझसे फसलों, सरकारी योजनाओं या मौसम के बारे में पूछें।", crop_health_analysis: "फसल स्वास्थ्य विश्लेषण", free_analysis: "मुफ़्त फोटो विश्लेषण", free_analysis_desc: "अपनी फसल की एक तस्वीर अपलोड करके एक सामान्य स्वास्थ्य जांच प्राप्त करें।", upload_field_image: "खेत की तस्वीर अपलोड करें", get_free_analysis: "मुफ़्त विश्लेषण प्राप्त करें", upgrade_for_scan: "हाइपरस्पेक्ट्रल स्कैन के लिए अपग्रेड करें", upgrade_desc: "मिट्टी के स्वास्थ्य, पानी के तनाव और बीमारी की भविष्यवाणी पर विस्तृत जानकारी प्राप्त करें।", single_scan: "एकल क्षेत्र स्कैन", single_scan_desc: "आपके पूरे खेत का एकमुश्त विस्तृत विश्लेषण।", buy_now: "₹93 में खरीदें", monthly_plan: "मासिक योजना", monthly_plan_desc: "4 सप्ताह के लिए प्रति सप्ताह 1 स्कैन। निरंतर निगरानी।", subscribe_now: "₹250/माह के लिए सब्सक्राइब करें", best_value: "सबसे अच्छा मूल्य", slide1_title: "फसल अपशिष्ट के लिए फैक्टरी समाधान", slide1_desc: "जलाने के बजाय, फसल अपशिष्ट को ईंटों, बायोगैस और उर्वरक में परिवर्तित किया जा सकता है।", slide2_title: "आपकी भूमि के लिए सर्वोत्तम परिणाम वाली फसलें", slide2_desc: "आपकी मिट्टी के प्रकार (काली कपास) के आधार पर, कपास और सोयाबीन जैसी फसलों ने ऐतिहासिक रूप से सबसे अच्छी पैदावार दिखाई है।", crop_quality_history: "फसल गुणवत्ता इतिहास", ai_response_title: "एआई विश्लेषण परिणाम", ai_health_status: "स्वास्थ्य स्थिति", ai_disease_detection: "रोग का पता लगाना", ai_pesticide_advice: "कीटनाशक सलाह", ai_crop_suggestion: "फसल सुझाव", farmer_dashboard_title: "किसान डैशबोर्ड", controller_dashboard_title: "नियंत्रक डैशबोर्ड", sidebar_weather: "स्थान और मौसम", sidebar_market: "बाजार मूल्य", sidebar_quality: "फसल की गुणवत्ता", sidebar_orders: "आपूर्ति आदेश", sidebar_kendras: "आस-पास के केंद्र", sidebar_sustainability: "सस्टेनेबिलिटी", sidebar_health: "फसल स्वास्थ्य", sidebar_regional_farms: "क्षेत्रीय फार्म", sidebar_ai_diagnosis: "एआई निदान", notifications: "चेतावनी और सूचनाएं", sidebar_notifications: "सूचनाएं", soil_profile: "मृदा प्रोफाइल विज़ुअलाइज़ेशन", export_data: "डेटा निर्यात करें", field_health: "क्षेत्र स्वास्थ्य और फसल उपयुक्तता", input_usage: "जल और इनपुट उपयोग ट्रैकिंग", sidebar_soil: "मृदा प्रोफाइल", sidebar_field_health: "क्षेत्र स्वास्थ्य", sidebar_input_usage: "इनपुट उपयोग", order_supplies_modal_title: "आपूर्ति का आदेश दें", order_supplies_modal_body: "यह सुविधा जल्द ही आ रही है! आप यहां से सीधे आपूर्ति का आदेश दे पाएंगे।", buy_scan_modal_title: "स्कैन खरीदें", buy_scan_modal_body: "इस खरीद को पूरा करने के लिए भुगतान गेटवे एकीकरण की आवश्यकता है।", subscribe_modal_title: "सदस्यता लें", subscribe_modal_body: "आपकी सदस्यता शुरू करने के लिए भुगतान गेटवे एकीकरण की आवश्यकता है।",
-                ai_assistant_title: "कृषि रक्षक सहायक से बात करें", ai_assistant_desc: "अपने खेत के डेटा पर तुरंत आवाज सहायता प्राप्त करें।", call_assistant_button: "ब्राउज़र से सहायक को कॉल करें"
+                ai_assistant_title: "कृषि रक्षक सहायक से बात करें", ai_assistant_desc: "अपने खेत के डेटा पर तुरंत आवाज सहायता प्राप्त करें।", call_assistant_button: "ब्राउज़र से सहायक को कॉल करें",
+                mic_request: "माइक्रोफ़ोन अनुमति का अनुरोध किया जा रहा है...", mic_denied: "माइक्रोफ़ोन की अनुमति नहीं है। कृपया ब्राउज़र सेटिंग्स में अनुमति दें।", call_failed: "कॉल शुरू करने में विफल। कृपया पुन: प्रयास करें।", call_in_progress: "कॉल जारी है..."
             },
             pa: { welcome_title: "ਕ੍ਰਿਸ਼ੀ ਰਕਸ਼ਕ ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ", welcome_subtitle: "ਖੇਤੀ ਵਿੱਚ ਤੁਹਾਡਾ ਭਰੋਸੇਮੰਦ ਸਾਥੀ।", select_language: "ਭਾਸ਼ਾ ਚੁਣੋ", select_role: "ਮੈਂ ਇੱਕ...", role_farmer: "ਕਿਸਾਨ", role_controller: "ਕੰਟਰੋਲਰ", logout: "ਲੌਗ ਆਊਟ", helpline: "ਸਰਕਾਰੀ ਹੈਲਪਲਾਈਨ:", farm_location_weather: "ਖੇਤ ਦਾ ਸਥਾਨ ਅਤੇ ਮੌਸਮ", wind: "ਹਵਾ:", soil_type: "ਮਿੱਟੀ ਦੀ ਕਿਸਮ:", best_crops: "ਵਧੀਆ ਫਸਲਾਂ:", market_prices: "ਬਾਜ਼ਾਰ ਕੀਮਤ ਵਿਸ਼ਲੇਸ਼ਕ", order_supplies: "ਸਪਲਾਈ ਆਰਡਰ ਕਰੋ", order_supplies_desc: "ਸਰਕਾਰੀ ਦਰ 'ਤੇ ਖਾਦ ਅਤੇ ਕੀਟਨਾਸ਼ਕ ਪ੍ਰਾਪਤ ਕਰੋ।", place_order: "ਆਰਡਰ ਦਿਓ", nearby_kendras: "ਨੇੜਲੇ ਕ੍ਰਿਸ਼ੀ ਕੇਂਦਰ", sustainability_corner: "ਸਸਟੇਨੇਬਿਲਟੀ ਕਾਰਨਰ", learn_more: "ਹੋਰ ਜਾਣੋ »", regional_farms: "50 ਕਿਲੋਮੀਟਰ ਦੇ ਦਾਇਰੇ ਵਿੱਚ ਖੇਤ", ai_diagnosis: "ਏਆਈ-ਸੰਚਾਲਿਤ ਨਿਦਾਨ", ai_diagnosis_desc: "ਤੁਰੰਤ ਵਿਸ਼ਲੇਸ਼ਣ ਅਤੇ ਸਲਾਹ ਲਈ ਫਸਲ ਦੀ ਤਸਵੀਰ ਅੱਪਲੋਡ ਕਰੋ।", upload_file: "ਇੱਕ ਫਾਈਲ ਅੱਪਲੋਡ ਕਰੋ", analyze_image: "ਤਸਵੀਰ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੋ", chatbot_title: "ਕ੍ਰਿਸ਼ੀ ਸਹਾਇਕ", chatbot_welcome: "ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ! ਮੈਂ ਅੱਜ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ? ਮੈਨੂੰ ਫਸਲਾਂ, ਸਰਕਾਰੀ ਸਕੀਮਾਂ, ਜਾਂ ਮੌਸਮ ਬਾਰੇ ਪੁੱਛੋ।", crop_health_analysis: "ਫਸਲ ਸਿਹਤ ਵਿਸ਼ਲੇਸ਼ਣ", free_analysis: "ਮੁਫਤ ਫੋਟੋ ਵਿਸ਼ਲੇਸ਼ਣ", free_analysis_desc: "ਆਪਣੀ ਫਸਲ ਦੀ ਇੱਕ ਫੋਟੋ ਅਪਲੋਡ ਕਰਕੇ ਇੱਕ ਬੁਨਿਆਦੀ ਸਿਹਤ ਜਾਂਚ ਪ੍ਰਾਪਤ ਕਰੋ।", upload_field_image: "ਖੇਤ ਦੀ ਤਸਵੀਰ ਅੱਪਲੋਡ ਕਰੋ", get_free_analysis: "ਮੁਫਤ ਵਿਸ਼ਲੇਸ਼ਣ ਪ੍ਰਾਪਤ ਕਰੋ", upgrade_for_scan: "ਹਾਈਪਰਸਪੈਕਟਰਲ ਸਕੈਨ ਲਈ ਅਪਗ੍ਰੇਡ ਕਰੋ", upgrade_desc: "ਮਿੱਟੀ ਦੀ ਸਿਹਤ, ਪਾਣੀ ਦੇ ਤਣਾਅ, ਅਤੇ ਬਿਮਾਰੀ ਦੀ ਭਵਿੱਖਬਾਣੀ ਬਾਰੇ ਵਿਸਤ੍ਰਿਤ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰੋ।", single_scan: "ਸਿੰਗਲ ਫੀਲਡ ਸਕੈਨ", single_scan_desc: "ਤੁਹਾਡੇ ਪੂਰੇ ਖੇਤ ਦਾ ਇੱਕ ਵਾਰ ਦਾ ਵਿਸਤ੍ਰਿਤ ਵਿਸ਼ਲੇਸ਼ਣ।", buy_now: "₹93 ਵਿੱਚ ਖਰੀਦੋ", monthly_plan: "ਮਹੀਨਾਵਾਰ ਯੋਜਨਾ", monthly_plan_desc: "4 ਹਫ਼ਤਿਆਂ ਲਈ ਪ੍ਰਤੀ ਹਫ਼ਤਾ 1 ਸਕੈਨ। ਲਗਾਤਾਰ ਨਿਗਰਾਨੀ।", subscribe_now: "₹250/ਮਹੀਨਾ ਲਈ ਸਬਸਕ੍ਰਾਈਬ ਕਰੋ", best_value: "ਵਧੀਆ ਮੁੱਲ", slide1_title: "ਫਸਲਾਂ ਦੀ ਰਹਿੰਦ-ਖੂੰਹਦ ਲਈ ਫੈਕਟਰੀ ਹੱਲ", slide1_desc: "ਸਾੜਨ ਦੀ ਬਜਾਏ, ਫਸਲਾਂ ਦੀ ਰਹਿੰਦ-ਖੂੰਹਦ ਨੂੰ ਇੱਟਾਂ, ਬਾਇਓਗੈਸ ਅਤੇ ਖਾਦ ਵਿੱਚ ਬਦਲਿਆ ਜਾ ਸਕਦਾ ਹੈ।", slide2_title: "ਤੁਹਾਡੀ ਜ਼ਮੀਨ ਲਈ ਸਭ ਤੋਂ ਵਧੀਆ ਨਤੀਜੇ ਵਾਲੀਆਂ ਫਸਲਾਂ", slide2_desc: "ਤੁਹਾਡੀ ਮਿੱਟੀ ਦੀ ਕਿਸਮ (ਕਾਲੀ ਕਪਾਹ) ਦੇ ਅਧਾਰ ਤੇ, ਕਪਾਹ ਅਤੇ ਸੋਇਆਬੀਨ ਵਰਗੀਆਂ ਫਸਲਾਂ ਨੇ ਇਤਿਹਾਸਕ ਤੌਰ 'ਤੇ ਸਭ ਤੋਂ ਵਧੀਆ ਝਾੜ ਦਿਖਾਇਆ ਹੈ।", crop_quality_history: "ਫਸਲ ਗੁਣਵੱਤਾ ਇਤਿਹਾਸ", ai_response_title: "ਏਆਈ ਵਿਸ਼ਲੇਸ਼ਣ ਨਤੀਜਾ", ai_health_status: "ਸਿਹਤ ਸਥਿਤੀ", ai_disease_detection: "ਬਿਮਾਰੀ ਦੀ ਪਛਾਣ", ai_pesticide_advice: "ਕੀਟਨਾਸ਼ਕ ਸਲਾਹ", ai_crop_suggestion: "ਫਸਲ ਸੁਝਾਅ", farmer_dashboard_title: "ਕਿਸਾਨ ਡੈਸ਼ਬੋਰਡ", controller_dashboard_title: "ਕੰਟਰੋਲਰ ਡੈਸ਼ਬੋਰਡ", sidebar_weather: "ਸਥਾਨ ਅਤੇ ਮੌਸਮ", sidebar_market: "ਬਾਜ਼ਾਰ ਦੀਆਂ ਕੀਮਤਾਂ", sidebar_quality: "ਫਸਲ ਦੀ ਗੁਣਵੱਤਾ", sidebar_orders: "ਸਪਲਾਈ ਆਰਡਰ", sidebar_kendras: "ਨੇੜਲੇ ਕੇਂਦਰ", sidebar_sustainability: "ਸਥਿਰਤਾ", sidebar_health: "ਫਸਲ ਦੀ ਸਿਹਤ", sidebar_regional_farms: "ਖੇਤਰੀ ਖੇਤ", sidebar_ai_diagnosis: "ਏਆਈ ਨਿਦਾਨ", notifications: "ਚੇਤਾਵਨੀਆਂ ਅਤੇ ਸੂਚਨਾਵਾਂ", sidebar_notifications: "ਸੂਚਨਾਵਾਂ", soil_profile: "ਮਿੱਟੀ ਪ੍ਰੋਫਾਈਲ ਵਿਜ਼ੂਅਲਾਈਜ਼ੇਸ਼ਨ", export_data: "ਡਾਟਾ ਨਿਰਯਾਤ ਕਰੋ", field_health: "ਫੀਲਡ ਸਿਹਤ ਅਤੇ ਫਸਲ ਅਨੁਕੂਲਤਾ", input_usage: "ਪਾਣੀ ਅਤੇ ਇਨਪੁਟ ਵਰਤੋਂ ਦੀ ਟ੍ਰੈਕਿੰਗ", sidebar_soil: "ਮਿੱਟੀ ਪ੍ਰੋਫਾਈਲ", sidebar_field_health: "ਫੀਲਡ ਸਿਹਤ", sidebar_input_usage: "ਇਨਪੁਟ ਵਰਤੋਂ", order_supplies_modal_title: "ਸਪਲਾਈ ਆਰਡਰ ਕਰੋ", order_supplies_modal_body: "ਇਹ ਵਿਸ਼ੇਸ਼ਤਾ ਜਲਦੀ ਆ ਰਹੀ ਹੈ! ਤੁਸੀਂ ਇੱਥੋਂ ਸਿੱਧੇ ਸਪਲਾਈ ਦਾ ਆਰਡਰ ਦੇ ਸਕੋਗੇ।", buy_scan_modal_title: "ਸਕੈਨ ਖਰੀਦੋ", buy_scan_modal_body: "ਇਸ ਖਰੀਦ ਨੂੰ ਪੂਰਾ ਕਰਨ ਲਈ ਭੁਗਤਾਨ ਗੇਟਵੇ ਏਕੀਕਰਣ ਦੀ ਲੋੜ ਹੈ।", subscribe_modal_title: "ਸਬਸਕ੍ਰਾਈਬ ਕਰੋ", subscribe_modal_body: "ਤੁਹਾਡੀ ਗਾਹਕੀ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਭੁਗਤਾਨ ਗੇਟਵੇ ਏਕੀਕਰਣ ਦੀ ਲੋੜ ਹੈ।",
-                ai_assistant_title: "ਕ੍ਰਿਸ਼ੀ ਰਕਸ਼ਕ ਸਹਾਇਕ ਨਾਲ ਗੱਲ ਕਰੋ", ai_assistant_desc: "ਆਪਣੇ ਖੇਤ ਦੇ ਡੇਟਾ ਬਾਰੇ ਤੁਰੰਤ ਆਵਾਜ਼ ਸਲਾਹ ਪ੍ਰਾਪਤ ਕਰੋ।", call_assistant_button: "ਬ੍ਰਾਊਜ਼ਰ ਤੋਂ ਸਹਾਇਕ ਨੂੰ ਕਾਲ ਕਰੋ"
+                ai_assistant_title: "ਕ੍ਰਿਸ਼ੀ ਰਕਸ਼ਕ ਸਹਾਇਕ ਨਾਲ ਗੱਲ ਕਰੋ", ai_assistant_desc: "ਆਪਣੇ ਖੇਤ ਦੇ ਡੇਟਾ ਬਾਰੇ ਤੁਰੰਤ ਆਵਾਜ਼ ਸਲਾਹ ਪ੍ਰਾਪਤ ਕਰੋ।", call_assistant_button: "ਬ੍ਰਾਊਜ਼ਰ ਤੋਂ ਸਹਾਇਕ ਨੂੰ ਕਾਲ ਕਰੋ",
+                mic_request: "ਮਾਈਕ੍ਰੋਫੋਨ ਦੀ ਇਜਾਜ਼ਤ ਦੀ ਬੇਨਤੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...", mic_denied: "ਮਾਈਕ੍ਰੋਫੋਨ ਦੀ ਇਜਾਜ਼ਤ ਨਹੀਂ ਦਿੱਤੀ ਗਈ। ਕਿਰਪਾ ਕਰਕੇ ਬ੍ਰਾਊਜ਼ਰ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਇਜਾਜ਼ਤ ਦਿਓ।", call_failed: "ਕਾਲ ਸ਼ੁਰੂ ਕਰਨ ਵਿੱਚ ਅਸਫਲ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।", call_in_progress: "ਕਾਲ ਚੱਲ ਰਹੀ ਹੈ..."
             }
         };
 
         let currentLanguage = 'en';
         let currentSlide = 0;
+        const webClient = new window.RetellWebClient();
 
         // --- CORE APP LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -208,7 +212,31 @@
             document.getElementById('subscribe-btn').addEventListener('click', () => showModal('subscribe_modal_title', 'subscribe_modal_body'));
             document.getElementById('sustainability-prev-btn').addEventListener('click', () => changeSlide(-1));
             document.getElementById('sustainability-next-btn').addEventListener('click', () => changeSlide(1));
-            document.getElementById('retell-web-call-button').addEventListener('click', startRetellWebCall);
+            
+            const callButton = document.getElementById('retell-web-call-button');
+            const callStatus = document.getElementById('call-status');
+            callButton.addEventListener('click', startRetellWebCall);
+
+            // Retell SDK event listeners for robust UI updates
+            webClient.on("conversationStarted", () => {
+                console.log("Conversation has started.");
+                callStatus.textContent = translations[currentLanguage]['call_in_progress'] || "Call in Progress...";
+                callButton.querySelector('span').textContent = translations[currentLanguage]['call_in_progress'] || "Call in Progress...";
+            });
+
+            webClient.on("conversationEnded", () => {
+                console.log("Conversation has ended.");
+                callStatus.textContent = ""; // Clear status
+                callButton.disabled = false; // Re-enable button
+                callButton.querySelector('span').textContent = translations[currentLanguage]['call_assistant_button'] || "Call Assistant from Browser";
+            });
+
+            webClient.on("error", (error) => {
+                console.error("Retell WebClient error:", error);
+                callStatus.textContent = translations[currentLanguage]['call_failed'] || "Error: Could not connect call.";
+                callButton.disabled = false; // Re-enable on error
+                callButton.querySelector('span').textContent = translations[currentLanguage]['call_assistant_button'] || "Call Assistant from Browser";
+            });
         });
 
         function setLanguage(lang, callback) {
@@ -501,8 +529,6 @@
         async function callOpenAIAPIMock() { /* This is a mock function */ }
         
         // --- RETELL WEB CALL LOGIC ---
-        const webClient = new RetellWebClient();
-        
         function getFarmDataContext() {
             const location = document.getElementById('farm-location')?.innerText || "Not available";
             const weather = document.getElementById('farm-weather')?.innerText || "Not available";
@@ -517,20 +543,37 @@
             return context;
         }
 
-        function startRetellWebCall() {
-            const agentId = RETELL_AGENT_ID; 
-            const farmContext = getFarmDataContext();
+        async function startRetellWebCall() {
+            const callButton = document.getElementById('retell-web-call-button');
+            const callStatus = document.getElementById('call-status');
+            
+            callButton.disabled = true;
+            callStatus.textContent = translations[currentLanguage]['mic_request'] || "Requesting microphone...";
+            
+            try {
+                const agentId = RETELL_AGENT_ID; 
+                const farmContext = getFarmDataContext();
 
-            webClient.startConversation({
-                agentId: agentId,
-                callDetails: {
-                    title: "Krishi Rakshak Assistant",
-                    description: "Connecting you to your AI farming expert..."
-                },
-                metadata: {
-                    farm_data: farmContext
+                await webClient.startConversation({
+                    agentId: agentId,
+                    callDetails: {
+                        title: "Krishi Rakshak Assistant",
+                        description: "Connecting you to your AI farming expert..."
+                    },
+                    metadata: {
+                        farm_data: farmContext
+                    }
+                });
+            } catch (error) {
+                console.error("Failed to start conversation:", error);
+                if (error.name === 'NotAllowedError') {
+                     callStatus.textContent = translations[currentLanguage]['mic_denied'] || "Microphone access denied. Please allow microphone access in your browser settings.";
+                } else {
+                     callStatus.textContent = translations[currentLanguage]['call_failed'] || "Call failed to start. Please try again.";
                 }
-            }).catch(console.error);
+                callButton.disabled = false;
+                callButton.querySelector('span').textContent = translations[currentLanguage]['call_assistant_button'] || "Call Assistant from Browser";
+            }
         }
 
         // --- GLOBAL EVENT LISTENERS ---
@@ -543,4 +586,5 @@
     </script>
 </body>
 </html>
+
 
