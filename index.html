@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krishi Rakshak - Farm Management App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxyy-Wamh08ppaaAfJdytkLzq4zO9N8Xo&callback=initMaps&libraries=places&v=weekly" defer></script>
+    <!-- Retell AI Web Client Script -->
+    <script src="https://unpkg.com/retell-client-js@1.1.7/dist/retellclient.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+        .dashboard-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #22c55e; /* Green 500 */
+            color: white;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #16a34a; /* Green 600 */
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 24px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 12px;
+            transform: translateY(-50px);
+            transition: transform 0.3s ease;
+        }
+        .modal.show .modal-content {
+             transform: translateY(0);
+        }
+        #sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        .sidebar-link.active {
+            background-color: #dcfce7; /* green-100 */
+            color: #16a34a; /* green-600 */
+            font-weight: 600;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Main Application Container -->
+    <div id="app-container">
+        <!-- Role & Language Selection Screen -->
+        <div id="selection-screen" class="min-h-screen flex items-center justify-center bg-green-50">
+            <div class="text-center p-8 bg-white rounded-2xl shadow-xl max-w-md w-full">
+                <img src="https://placehold.co/400x200/a7f3d0/166534?text=Krishi+Rakshak&font=inter" alt="Krishi Rakshak Welcome Banner" class="rounded-lg mx-auto mb-6">
+                
+                <h1 class="text-3xl font-bold text-green-700 mb-2" data-lang-key="welcome_title">Welcome to Krishi Rakshak</h1>
+                <p class="text-gray-600 mb-6" data-lang-key="welcome_subtitle">Your trusted partner in farming.</p>
+
+                <div class="mb-6">
+                    <label for="language-select" class="block text-left font-medium text-gray-700 mb-2" data-lang-key="select_language">Select Language</label>
+                    <select id="language-select" class="w-full p-3 border border-gray-300 rounded-lg">
+                        <option value="en">English</option>
+                        <option value="hi">हिन्दी (Hindi)</option>
+                        <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                    </select>
+                </div>
+
+                <div class="mb-6">
+                     <p class="block text-left font-medium text-gray-700 mb-2" data-lang-key="select_role">I am a...</p>
+                    <div class="flex space-x-4">
+                        <button onclick="selectRole('farmer')" class="flex-1 btn-primary" data-lang-key="role_farmer">Farmer</button>
+                        <button onclick="selectRole('controller')" class="flex-1 btn-primary" data-lang-key="role_controller">Controller</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARDS CONTAINER -->
+        <div id="dashboards-container" class="hidden">
+            <!-- Sidebar -->
+            <aside id="sidebar" class="bg-white text-gray-800 w-64 fixed inset-y-0 left-0 z-40 transform -translate-x-full md:translate-x-0 shadow-lg">
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-green-700">Krishi Rakshak</h2>
+                     <button id="sidebar-close" class="md:hidden text-gray-600">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <nav id="sidebar-nav" class="p-4 space-y-2"></nav>
+            </aside>
+
+            <div class="md:ml-64 transition-all duration-300 ease-in-out">
+                <!-- Top Nav -->
+                <nav class="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-30">
+                     <button id="sidebar-toggle" class="md:hidden text-gray-600" aria-label="Open sidebar">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <h1 id="dashboard-title" class="text-xl font-bold text-green-700"></h1>
+                    <div class="flex items-center space-x-4">
+                        <p class="hidden sm:block"><span class="font-medium" data-lang-key="helpline">Govt. Helpline:</span> <a href="tel:1800-180-1551" class="text-green-600 font-bold hover:underline">1800-180-1551</a></p>
+                        <button onclick="logout()" class="text-sm font-medium text-gray-600 hover:text-green-700" data-lang-key="logout">Logout</button>
+                    </div>
+                </nav>
+
+                <!-- Farmer Dashboard -->
+                <div id="farmer-dashboard" class="hidden">
+                     <main class="p-4 md:p-8 space-y-6">
+                        <section id="location-weather-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="farm_location_weather">Farm Location & Weather</h2><div id="map" class="h-48 rounded-lg bg-gray-200 mb-4"></div><p id="farm-location" class="font-medium">Nagpur, Maharashtra</p><div class="mt-4"><p id="farm-weather" class="text-3xl font-bold">28°C <span class="text-lg font-medium text-gray-500">Clear Sky</span></p><p id="farm-wind" class="text-gray-600" data-lang-key="wind">Wind: 12 km/h</p><p id="farm-soil" class="text-gray-600" data-lang-key="soil_type">Soil Type: Black Cotton Soil</p><p id="farm-crops" class="mt-2 text-green-700 font-medium" data-lang-key="best_crops">Best Crops: Cotton, Oranges, Soybean</p></div></section>
+                        <section id="market-prices-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="market_prices">Market Price Analyzer</h2><canvas id="marketChart"></canvas></section>
+                        <section id="crop-quality-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="crop_quality_history">Crop Quality History</h2><canvas id="qualityChart"></canvas></section>
+                        <section id="order-supplies-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="order_supplies">Order Supplies</h2><p class="text-gray-600 mb-4" data-lang-key="order_supplies_desc">Get government-rate fertilizers & pesticides.</p><button id="place-order-btn" class="w-full btn-primary" data-lang-key="place_order">Place an Order</button></section>
+                        <section id="ai-assistant-call-section" class="dashboard-card p-6 text-center"><h2 class="text-xl font-semibold mb-3" data-lang-key="ai_assistant_title">Talk to Krishi Rakshak Assistant</h2><p class="text-gray-600 mb-4" data-lang-key="ai_assistant_desc">Get instant voice advice on your farm's data.</p><button id="retell-web-call-button" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8h-1a6 6 0 11-12 0H3a7.001 7.001 0 006 6.93V17H7a1 1 0 100 2h6a1 1 0 100-2h-2v-2.07z" clip-rule="evenodd" /></svg><span data-lang-key="call_assistant_button">Call Assistant from Browser</span></button></section>
+                        <section id="nearby-kendras-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="nearby_kendras">Nearby Krishi Kendras</h2><ul class="space-y-3"><li class="p-3 bg-gray-50 rounded-lg"><p class="font-semibold">Central Institute for Cotton Research</p><p class="text-sm text-gray-600">5 km away - Nagpur</p></li><li class="p-3 bg-gray-50 rounded-lg"><p class="font-semibold">Panjabrao Deshmukh Krishi Vidyapeeth</p><p class="text-sm text-gray-600">12 km away - Akola</p></li></ul></section>
+                        <section id="sustainability-section" class="dashboard-card p-6 overflow-hidden"><h2 class="text-xl font-semibold mb-3" data-lang-key="sustainability_corner">Sustainability Corner</h2><div id="sustainability-slider" class="relative"><div class="sustainability-slide"><h3 class="font-bold text-lg mb-2" data-lang-key="slide1_title">Factory Solutions for Crop Waste</h3><p class="text-gray-600 mb-4" data-lang-key="slide1_desc">Instead of burning, crop waste can be converted into bricks, biogas, and fertilizer.</p><a href="https://youtu.be/JP4ob9RVklo?feature=shared" target="_blank" rel="noopener noreferrer" class="font-bold text-green-600 hover:underline" data-lang-key="learn_more">Learn More &raquo;</a></div><div class="sustainability-slide hidden"><h3 class="font-bold text-lg mb-2" data-lang-key="slide2_title">Best Outcome Crops for Your Land</h3><p class="text-gray-600 mb-4" data-lang-key="slide2_desc">Based on your soil type (Black Cotton), crops like Cotton and Soybean have historically shown the best yields.</p></div></div><div class="flex justify-end space-x-2 mt-4"><button id="sustainability-prev-btn" class="bg-gray-200 p-2 rounded-full" aria-label="Previous slide">&lt;</button><button id="sustainability-next-btn" class="bg-gray-200 p-2 rounded-full" aria-label="Next slide">&gt;</button></div></section>
+                        <section id="crop-health-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="crop_health_analysis">Crop Health Analysis</h2><div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><div class="lg:col-span-1 border-r-0 lg:border-r lg:pr-6 border-gray-200"><h3 class="font-semibold text-lg text-gray-800" data-lang-key="free_analysis">Free Photo Analysis</h3><p class="text-gray-600 mb-4 text-sm" data-lang-key="free_analysis_desc">Get a basic health check by uploading a photo of your crop.</p><div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center"><svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><label for="farmer-file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none"><span data-lang-key="upload_field_image">Upload field image</span><input id="farmer-file-upload" name="farmer-file-upload" type="file" class="sr-only"></label></div><button onclick="handleImageAnalysis('farmer')" class="mt-4 w-full bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-700" data-lang-key="get_free_analysis">Get Free Analysis</button></div><div class="lg:col-span-2"><h3 class="font-semibold text-lg text-green-700 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 2a1 1 0 00-1 1v1.118a2 2 0 00-1.78 1.14l-1 2A1 1 0 002 9h16a1 1 0 00.78-1.742l-1-2A2 2 0 0016 4.118V3a1 1 0 00-1-1H5zm12 8H3a1 1 0 00-1 1v6a1 1 0 001 1h14a1 1 0 001-1v-6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg><span data-lang-key="upgrade_for_scan">Upgrade for Hyperspectral Scan</span></h3><p class="text-gray-600 mb-4 text-sm" data-lang-key="upgrade_desc">Get detailed insights on soil health, water stress, and disease prediction.</p><div class="flex flex-col md:flex-row gap-4"><div class="flex-1 p-4 border border-gray-300 rounded-lg bg-white text-center"><h4 class="font-bold text-md" data-lang-key="single_scan">Single Field Scan</h4><p class="text-3xl font-bold my-2">₹93</p><p class="text-sm text-gray-500 mb-4" data-lang-key="single_scan_desc">One-time detailed analysis of your entire field.</p><button id="buy-scan-btn" class="w-full btn-primary" data-lang-key="buy_now">Buy for ₹93</button></div><div class="flex-1 p-4 border-2 border-green-500 rounded-lg bg-green-50 text-center relative"><span class="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg" data-lang-key="best_value">BEST VALUE</span><h4 class="font-bold text-md" data-lang-key="monthly_plan">Monthly Plan</h4><p class="text-3xl font-bold my-2">₹250<span class="text-lg font-normal text-gray-600">/mo</span></p><p class="text-sm text-gray-500 mb-4" data-lang-key="monthly_plan_desc">1 scan per week for 4 weeks. Continuous monitoring.</p><button id="subscribe-btn" class="w-full btn-primary" data-lang-key="subscribe_now">Subscribe for ₹250/mo</button></div></div></div></div><div id="farmer-ai-response" class="mt-6 hidden bg-green-50 p-4 rounded-lg"></div></section>
+                    </main>
+                </div>
+                
+                <!-- Controller Dashboard -->
+                <div id="controller-dashboard" class="hidden">
+                     <main class="p-4 md:p-8 space-y-6">
+                        <section id="notifications-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="notifications">Alerts & Notifications</h2><div class="space-y-3"><div class="flex items-start p-3 bg-red-50 text-red-800 rounded-lg"><svg class="h-6 w-6 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.343 16c-.77 1.333.192 3 1.732 3z"/></svg><div><p class="font-bold">Pest Advisory Issued for Nagpur Region</p><p class="text-sm">Increased aphid activity reported. Recommend immediate preventative spraying for cotton crops.</p></div></div><div class="flex items-start p-3 bg-yellow-50 text-yellow-800 rounded-lg"><svg class="h-6 w-6 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><div><p class="font-bold">Farm ID #F789 - Soil Moisture Critical (&lt;25%)</p><p class="text-sm">Advise farmer to initiate irrigation cycle within the next 24 hours to prevent crop stress.</p></div></div></div></section>
+                        <section id="regional-farms-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="regional_farms">Farms in 50km Radius</h2><div id="controller-map" class="h-96 rounded-lg bg-gray-200"></div></section>
+                        <section id="soil-profile-section" class="dashboard-card p-6"><div class="flex justify-between items-center mb-3"><h2 class="text-xl font-semibold" data-lang-key="soil_profile">Soil Profile Visualization (Farm #F789)</h2><button onclick="exportData('soil')" class="text-sm btn-primary py-2 px-4" data-lang-key="export_data">Export Data</button></div><div class="grid md:grid-cols-2 gap-6"><div class="h-48"><canvas id="nutrientChart"></canvas></div><div class="h-48"><canvas id="phMoistureChart"></canvas></div></div></section>
+                        <section id="field-health-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="field_health">Field Health & Crop Suitability</h2><div class="grid md:grid-cols-2 gap-6"><div class="h-48"><canvas id="healthChart"></canvas></div><div class="h-48"><canvas id="suitabilityChart"></canvas></div></div></section>
+                        <section id="input-usage-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="input_usage">Water & Input Usage Tracking</h2><canvas id="usageChart"></canvas></section>
+                        <section id="ai-diagnosis-section" class="dashboard-card p-6"><h2 class="text-xl font-semibold mb-3" data-lang-key="ai_diagnosis">AI-Powered Diagnosis</h2><p class="text-gray-600 mb-4" data-lang-key="ai_diagnosis_desc">Upload a crop image for instant analysis and advice.</p><div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center"><svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><label for="controller-file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500"><span data-lang-key="upload_file">Upload a file</span><input id="controller-file-upload" name="file-upload" type="file" class="sr-only"></label><p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p></div><button onclick="handleImageAnalysis('controller')" class="mt-4 w-full btn-primary" data-lang-key="analyze_image">Analyze Image</button><div id="controller-ai-response" class="mt-6 hidden bg-green-50 p-4 rounded-lg"></div></section>
+                    </main>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chatbot -->
+        <div id="chatbot-container" class="fixed bottom-6 right-6 z-50">
+            <button onclick="openChatbot()" class="bg-green-600 text-white rounded-full p-4 shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500" aria-label="Open chatbot">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="chatbot-modal" class="modal"><div class="modal-content relative"><button onclick="closeChatbot()" class="absolute top-2 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" aria-label="Close chatbot">&times;</button><h2 class="text-xl font-bold mb-4" data-lang-key="chatbot_title">Krishi Sahayak</h2><div class="h-64 bg-gray-100 p-3 rounded-lg overflow-y-auto mb-4"><div class="text-sm text-gray-700"><b class="text-green-700">Krishi Sahayak:</b> <span data-lang-key="chatbot_welcome">Hello! How can I help you today? Ask me about crops, government schemes, or weather.</span></div></div><input type="text" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Type your question here..."></div></div>
+    <div id="generic-modal" class="modal"><div class="modal-content relative"><button onclick="closeModal()" class="absolute top-2 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" aria-label="Close modal">&times;</button><h2 id="modal-title" class="text-xl font-bold mb-4"></h2><p id="modal-body"></p></div></div>
+
+    <script type="module">/* Firebase integration placeholder */</script>
+
+    <script>
+        // --- CONFIGURATION ---
+        const OPENAI_API_KEY = "sk-uvwx5678uvwx5678uvwx5678uvwx5678uvwx5678";
+        const RETELL_AGENT_ID = "agent_85009b01d72b19d10da73c601b";
+
+        const translations = {
+            en: { welcome_title: "Welcome to Krishi Rakshak", welcome_subtitle: "Your trusted partner in farming.", select_language: "Select Language", select_role: "I am a...", role_farmer: "Farmer", role_controller: "Controller", logout: "Logout", helpline: "Govt. Helpline:", farm_location_weather: "Farm Location & Weather", wind: "Wind:", soil_type: "Soil Type:", best_crops: "Best Crops:", market_prices: "Market Price Analyzer", order_supplies: "Order Supplies", order_supplies_desc: "Get government-rate fertilizers & pesticides.", place_order: "Place an Order", nearby_kendras: "Nearby Krishi Kendras", sustainability_corner: "Sustainability Corner", learn_more: "Learn More »", regional_farms: "Farms in 50km Radius", ai_diagnosis: "AI-Powered Diagnosis", ai_diagnosis_desc: "Upload a crop image for instant analysis and advice.", upload_file: "Upload a file", analyze_image: "Analyze Image", chatbot_title: "Krishi Sahayak", chatbot_welcome: "Hello! How can I help you today? Ask me about crops, government schemes, or weather.", crop_health_analysis: "Crop Health Analysis", free_analysis: "Free Photo Analysis", free_analysis_desc: "Get a basic health check by uploading a photo of your crop.", upload_field_image: "Upload field image", get_free_analysis: "Get Free Analysis", upgrade_for_scan: "Upgrade for Hyperspectral Scan", upgrade_desc: "Get detailed insights on soil health, water stress, and disease prediction.", single_scan: "Single Field Scan", single_scan_desc: "One-time detailed analysis of your entire field.", buy_now: "Buy for ₹93", monthly_plan: "Monthly Plan", monthly_plan_desc: "1 scan per week for 4 weeks. Continuous monitoring.", subscribe_now: "Subscribe for ₹250/mo", best_value: "BEST VALUE", slide1_title: "Factory Solutions for Crop Waste", slide1_desc: "Instead of burning, crop waste can be converted into bricks, biogas, and fertilizer.", slide2_title: "Best Outcome Crops for Your Land", slide2_desc: "Based on your soil type (Black Cotton), crops like Cotton and Soybean have historically shown the best yields.", crop_quality_history: "Crop Quality History", ai_response_title: "AI Analysis Result", ai_health_status: "Health Status", ai_disease_detection: "Disease Detection", ai_pesticide_advice: "Pesticide Advice", ai_crop_suggestion: "Crop Suggestion", farmer_dashboard_title: "Farmer Dashboard", controller_dashboard_title: "Controller Dashboard", sidebar_weather: "Location & Weather", sidebar_market: "Market Prices", sidebar_quality: "Crop Quality", sidebar_orders: "Order Supplies", sidebar_kendras: "Nearby Kendras", sidebar_sustainability: "Sustainability", sidebar_health: "Crop Health", sidebar_regional_farms: "Regional Farms", sidebar_ai_diagnosis: "AI Diagnosis", notifications: "Alerts & Notifications", sidebar_notifications: "Notifications", soil_profile: "Soil Profile Visualization (Farm #F789)", export_data: "Export Data", field_health: "Field Health & Crop Suitability", input_usage: "Water & Input Usage Tracking", sidebar_soil: "Soil Profile", sidebar_field_health: "Field Health", sidebar_input_usage: "Input Usage", order_supplies_modal_title: "Order Supplies", order_supplies_modal_body: "This feature is coming soon! You will be able to order supplies directly from here.", buy_scan_modal_title: "Buy Scan", buy_scan_modal_body: "Payment gateway integration is needed to complete this purchase.", subscribe_modal_title: "Subscribe", subscribe_modal_body: "Payment gateway integration is needed to start your subscription.",
+                ai_assistant_title: "Talk to Krishi Rakshak Assistant", ai_assistant_desc: "Get instant voice advice on your farm's data.", call_assistant_button: "Call Assistant from Browser" 
+            },
+            hi: { welcome_title: "कृषि रक्षक में आपका स्वागत है", welcome_subtitle: "खेती में आपका विश्वसनीय साथी।", select_language: "भाषा चुनें", select_role: "मैं एक...", role_farmer: "किसान", role_controller: "नियंत्रक", logout: "लॉग आउट", helpline: "सरकारी हेल्पलाइन:", farm_location_weather: "खेत का स्थान और मौसम", wind: "हवा:", soil_type: "मिट्टी का प्रकार:", best_crops: "सर्वश्रेष्ठ फसलें:", market_prices: "बाजार मूल्य विश्लेषक", order_supplies: "आपूर्ति का आदेश दें", order_supplies_desc: "सरकारी दर पर उर्वरक और कीटनाशक प्राप्त करें।", place_order: "आदेश दें", nearby_kendras: "आस-पास के कृषि केंद्र", sustainability_corner: "सस्टेनेबिलिटी कॉर्नर", learn_more: "और जानें »", regional_farms: "50 किमी के दायरे में खेत", ai_diagnosis: "एआई-संचालित निदान", ai_diagnosis_desc: "तत्काल विश्लेषण और सलाह के लिए फसल की एक छवि अपलोड करें।", upload_file: "एक फ़ाइल अपलोड करें", analyze_image: "छवि का विश्लेषण करें", chatbot_title: "कृषि सहायक", chatbot_welcome: "नमस्ते! मैं आज आपकी कैसे मदद कर सकता हूँ? मुझसे फसलों, सरकारी योजनाओं या मौसम के बारे में पूछें।", crop_health_analysis: "फसल स्वास्थ्य विश्लेषण", free_analysis: "मुफ़्त फोटो विश्लेषण", free_analysis_desc: "अपनी फसल की एक तस्वीर अपलोड करके एक सामान्य स्वास्थ्य जांच प्राप्त करें।", upload_field_image: "खेत की तस्वीर अपलोड करें", get_free_analysis: "मुफ़्त विश्लेषण प्राप्त करें", upgrade_for_scan: "हाइपरस्पेक्ट्रल स्कैन के लिए अपग्रेड करें", upgrade_desc: "मिट्टी के स्वास्थ्य, पानी के तनाव और बीमारी की भविष्यवाणी पर विस्तृत जानकारी प्राप्त करें।", single_scan: "एकल क्षेत्र स्कैन", single_scan_desc: "आपके पूरे खेत का एकमुश्त विस्तृत विश्लेषण।", buy_now: "₹93 में खरीदें", monthly_plan: "मासिक योजना", monthly_plan_desc: "4 सप्ताह के लिए प्रति सप्ताह 1 स्कैन। निरंतर निगरानी।", subscribe_now: "₹250/माह के लिए सब्सक्राइब करें", best_value: "सबसे अच्छा मूल्य", slide1_title: "फसल अपशिष्ट के लिए फैक्टरी समाधान", slide1_desc: "जलाने के बजाय, फसल अपशिष्ट को ईंटों, बायोगैस और उर्वरक में परिवर्तित किया जा सकता है।", slide2_title: "आपकी भूमि के लिए सर्वोत्तम परिणाम वाली फसलें", slide2_desc: "आपकी मिट्टी के प्रकार (काली कपास) के आधार पर, कपास और सोयाबीन जैसी फसलों ने ऐतिहासिक रूप से सबसे अच्छी पैदावार दिखाई है।", crop_quality_history: "फसल गुणवत्ता इतिहास", ai_response_title: "एआई विश्लेषण परिणाम", ai_health_status: "स्वास्थ्य स्थिति", ai_disease_detection: "रोग का पता लगाना", ai_pesticide_advice: "कीटनाशक सलाह", ai_crop_suggestion: "फसल सुझाव", farmer_dashboard_title: "किसान डैशबोर्ड", controller_dashboard_title: "नियंत्रक डैशबोर्ड", sidebar_weather: "स्थान और मौसम", sidebar_market: "बाजार मूल्य", sidebar_quality: "फसल की गुणवत्ता", sidebar_orders: "आपूर्ति आदेश", sidebar_kendras: "आस-पास के केंद्र", sidebar_sustainability: "सस्टेनेबिलिटी", sidebar_health: "फसल स्वास्थ्य", sidebar_regional_farms: "क्षेत्रीय फार्म", sidebar_ai_diagnosis: "एआई निदान", notifications: "चेतावनी और सूचनाएं", sidebar_notifications: "सूचनाएं", soil_profile: "मृदा प्रोफाइल विज़ुअलाइज़ेशन", export_data: "डेटा निर्यात करें", field_health: "क्षेत्र स्वास्थ्य और फसल उपयुक्तता", input_usage: "जल और इनपुट उपयोग ट्रैकिंग", sidebar_soil: "मृदा प्रोफाइल", sidebar_field_health: "क्षेत्र स्वास्थ्य", sidebar_input_usage: "इनपुट उपयोग", order_supplies_modal_title: "आपूर्ति का आदेश दें", order_supplies_modal_body: "यह सुविधा जल्द ही आ रही है! आप यहां से सीधे आपूर्ति का आदेश दे पाएंगे।", buy_scan_modal_title: "स्कैन खरीदें", buy_scan_modal_body: "इस खरीद को पूरा करने के लिए भुगतान गेटवे एकीकरण की आवश्यकता है।", subscribe_modal_title: "सदस्यता लें", subscribe_modal_body: "आपकी सदस्यता शुरू करने के लिए भुगतान गेटवे एकीकरण की आवश्यकता है।",
+                ai_assistant_title: "कृषि रक्षक सहायक से बात करें", ai_assistant_desc: "अपने खेत के डेटा पर तुरंत आवाज सहायता प्राप्त करें।", call_assistant_button: "ब्राउज़र से सहायक को कॉल करें"
+            },
+            pa: { welcome_title: "ਕ੍ਰਿਸ਼ੀ ਰਕਸ਼ਕ ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ", welcome_subtitle: "ਖੇਤੀ ਵਿੱਚ ਤੁਹਾਡਾ ਭਰੋਸੇਮੰਦ ਸਾਥੀ।", select_language: "ਭਾਸ਼ਾ ਚੁਣੋ", select_role: "ਮੈਂ ਇੱਕ...", role_farmer: "ਕਿਸਾਨ", role_controller: "ਕੰਟਰੋਲਰ", logout: "ਲੌਗ ਆਊਟ", helpline: "ਸਰਕਾਰੀ ਹੈਲਪਲਾਈਨ:", farm_location_weather: "ਖੇਤ ਦਾ ਸਥਾਨ ਅਤੇ ਮੌਸਮ", wind: "ਹਵਾ:", soil_type: "ਮਿੱਟੀ ਦੀ ਕਿਸਮ:", best_crops: "ਵਧੀਆ ਫਸਲਾਂ:", market_prices: "ਬਾਜ਼ਾਰ ਕੀਮਤ ਵਿਸ਼ਲੇਸ਼ਕ", order_supplies: "ਸਪਲਾਈ ਆਰਡਰ ਕਰੋ", order_supplies_desc: "ਸਰਕਾਰੀ ਦਰ 'ਤੇ ਖਾਦ ਅਤੇ ਕੀਟਨਾਸ਼ਕ ਪ੍ਰਾਪਤ ਕਰੋ।", place_order: "ਆਰਡਰ ਦਿਓ", nearby_kendras: "ਨੇੜਲੇ ਕ੍ਰਿਸ਼ੀ ਕੇਂਦਰ", sustainability_corner: "ਸਸਟੇਨੇਬਿਲਟੀ ਕਾਰਨਰ", learn_more: "ਹੋਰ ਜਾਣੋ »", regional_farms: "50 ਕਿਲੋਮੀਟਰ ਦੇ ਦਾਇਰੇ ਵਿੱਚ ਖੇਤ", ai_diagnosis: "ਏਆਈ-ਸੰਚਾਲਿਤ ਨਿਦਾਨ", ai_diagnosis_desc: "ਤੁਰੰਤ ਵਿਸ਼ਲੇਸ਼ਣ ਅਤੇ ਸਲਾਹ ਲਈ ਫਸਲ ਦੀ ਤਸਵੀਰ ਅੱਪਲੋਡ ਕਰੋ।", upload_file: "ਇੱਕ ਫਾਈਲ ਅੱਪਲੋਡ ਕਰੋ", analyze_image: "ਤਸਵੀਰ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੋ", chatbot_title: "ਕ੍ਰਿਸ਼ੀ ਸਹਾਇਕ", chatbot_welcome: "ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ! ਮੈਂ ਅੱਜ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ? ਮੈਨੂੰ ਫਸਲਾਂ, ਸਰਕਾਰੀ ਸਕੀਮਾਂ, ਜਾਂ ਮੌਸਮ ਬਾਰੇ ਪੁੱਛੋ।", crop_health_analysis: "ਫਸਲ ਸਿਹਤ ਵਿਸ਼ਲੇਸ਼ਣ", free_analysis: "ਮੁਫਤ ਫੋਟੋ ਵਿਸ਼ਲੇਸ਼ਣ", free_analysis_desc: "ਆਪਣੀ ਫਸਲ ਦੀ ਇੱਕ ਫੋਟੋ ਅਪਲੋਡ ਕਰਕੇ ਇੱਕ ਬੁਨਿਆਦੀ ਸਿਹਤ ਜਾਂਚ ਪ੍ਰਾਪਤ ਕਰੋ।", upload_field_image: "ਖੇਤ ਦੀ ਤਸਵੀਰ ਅੱਪਲੋਡ ਕਰੋ", get_free_analysis: "ਮੁਫਤ ਵਿਸ਼ਲੇਸ਼ਣ ਪ੍ਰਾਪਤ ਕਰੋ", upgrade_for_scan: "ਹਾਈਪਰਸਪੈਕਟਰਲ ਸਕੈਨ ਲਈ ਅਪਗ੍ਰੇਡ ਕਰੋ", upgrade_desc: "ਮਿੱਟੀ ਦੀ ਸਿਹਤ, ਪਾਣੀ ਦੇ ਤਣਾਅ, ਅਤੇ ਬਿਮਾਰੀ ਦੀ ਭਵਿੱਖਬਾਣੀ ਬਾਰੇ ਵਿਸਤ੍ਰਿਤ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰੋ।", single_scan: "ਸਿੰਗਲ ਫੀਲਡ ਸਕੈਨ", single_scan_desc: "ਤੁਹਾਡੇ ਪੂਰੇ ਖੇਤ ਦਾ ਇੱਕ ਵਾਰ ਦਾ ਵਿਸਤ੍ਰਿਤ ਵਿਸ਼ਲੇਸ਼ਣ।", buy_now: "₹93 ਵਿੱਚ ਖਰੀਦੋ", monthly_plan: "ਮਹੀਨਾਵਾਰ ਯੋਜਨਾ", monthly_plan_desc: "4 ਹਫ਼ਤਿਆਂ ਲਈ ਪ੍ਰਤੀ ਹਫ਼ਤਾ 1 ਸਕੈਨ। ਲਗਾਤਾਰ ਨਿਗਰਾਨੀ।", subscribe_now: "₹250/ਮਹੀਨਾ ਲਈ ਸਬਸਕ੍ਰਾਈਬ ਕਰੋ", best_value: "ਵਧੀਆ ਮੁੱਲ", slide1_title: "ਫਸਲਾਂ ਦੀ ਰਹਿੰਦ-ਖੂੰਹਦ ਲਈ ਫੈਕਟਰੀ ਹੱਲ", slide1_desc: "ਸਾੜਨ ਦੀ ਬਜਾਏ, ਫਸਲਾਂ ਦੀ ਰਹਿੰਦ-ਖੂੰਹਦ ਨੂੰ ਇੱਟਾਂ, ਬਾਇਓਗੈਸ ਅਤੇ ਖਾਦ ਵਿੱਚ ਬਦਲਿਆ ਜਾ ਸਕਦਾ ਹੈ।", slide2_title: "ਤੁਹਾਡੀ ਜ਼ਮੀਨ ਲਈ ਸਭ ਤੋਂ ਵਧੀਆ ਨਤੀਜੇ ਵਾਲੀਆਂ ਫਸਲਾਂ", slide2_desc: "ਤੁਹਾਡੀ ਮਿੱਟੀ ਦੀ ਕਿਸਮ (ਕਾਲੀ ਕਪਾਹ) ਦੇ ਅਧਾਰ ਤੇ, ਕਪਾਹ ਅਤੇ ਸੋਇਆਬੀਨ ਵਰਗੀਆਂ ਫਸਲਾਂ ਨੇ ਇਤਿਹਾਸਕ ਤੌਰ 'ਤੇ ਸਭ ਤੋਂ ਵਧੀਆ ਝਾੜ ਦਿਖਾਇਆ ਹੈ।", crop_quality_history: "ਫਸਲ ਗੁਣਵੱਤਾ ਇਤਿਹਾਸ", ai_response_title: "ਏਆਈ ਵਿਸ਼ਲੇਸ਼ਣ ਨਤੀਜਾ", ai_health_status: "ਸਿਹਤ ਸਥਿਤੀ", ai_disease_detection: "ਬਿਮਾਰੀ ਦੀ ਪਛਾਣ", ai_pesticide_advice: "ਕੀਟਨਾਸ਼ਕ ਸਲਾਹ", ai_crop_suggestion: "ਫਸਲ ਸੁਝਾਅ", farmer_dashboard_title: "ਕਿਸਾਨ ਡੈਸ਼ਬੋਰਡ", controller_dashboard_title: "ਕੰਟਰੋਲਰ ਡੈਸ਼ਬੋਰਡ", sidebar_weather: "ਸਥਾਨ ਅਤੇ ਮੌਸਮ", sidebar_market: "ਬਾਜ਼ਾਰ ਦੀਆਂ ਕੀਮਤਾਂ", sidebar_quality: "ਫਸਲ ਦੀ ਗੁਣਵੱਤਾ", sidebar_orders: "ਸਪਲਾਈ ਆਰਡਰ", sidebar_kendras: "ਨੇੜਲੇ ਕੇਂਦਰ", sidebar_sustainability: "ਸਥਿਰਤਾ", sidebar_health: "ਫਸਲ ਦੀ ਸਿਹਤ", sidebar_regional_farms: "ਖੇਤਰੀ ਖੇਤ", sidebar_ai_diagnosis: "ਏਆਈ ਨਿਦਾਨ", notifications: "ਚੇਤਾਵਨੀਆਂ ਅਤੇ ਸੂਚਨਾਵਾਂ", sidebar_notifications: "ਸੂਚਨਾਵਾਂ", soil_profile: "ਮਿੱਟੀ ਪ੍ਰੋਫਾਈਲ ਵਿਜ਼ੂਅਲਾਈਜ਼ੇਸ਼ਨ", export_data: "ਡਾਟਾ ਨਿਰਯਾਤ ਕਰੋ", field_health: "ਫੀਲਡ ਸਿਹਤ ਅਤੇ ਫਸਲ ਅਨੁਕੂਲਤਾ", input_usage: "ਪਾਣੀ ਅਤੇ ਇਨਪੁਟ ਵਰਤੋਂ ਦੀ ਟ੍ਰੈਕਿੰਗ", sidebar_soil: "ਮਿੱਟੀ ਪ੍ਰੋਫਾਈਲ", sidebar_field_health: "ਫੀਲਡ ਸਿਹਤ", sidebar_input_usage: "ਇਨਪੁਟ ਵਰਤੋਂ", order_supplies_modal_title: "ਸਪਲਾਈ ਆਰਡਰ ਕਰੋ", order_supplies_modal_body: "ਇਹ ਵਿਸ਼ੇਸ਼ਤਾ ਜਲਦੀ ਆ ਰਹੀ ਹੈ! ਤੁਸੀਂ ਇੱਥੋਂ ਸਿੱਧੇ ਸਪਲਾਈ ਦਾ ਆਰਡਰ ਦੇ ਸਕੋਗੇ।", buy_scan_modal_title: "ਸਕੈਨ ਖਰੀਦੋ", buy_scan_modal_body: "ਇਸ ਖਰੀਦ ਨੂੰ ਪੂਰਾ ਕਰਨ ਲਈ ਭੁਗਤਾਨ ਗੇਟਵੇ ਏਕੀਕਰਣ ਦੀ ਲੋੜ ਹੈ।", subscribe_modal_title: "ਸਬਸਕ੍ਰਾਈਬ ਕਰੋ", subscribe_modal_body: "ਤੁਹਾਡੀ ਗਾਹਕੀ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਭੁਗਤਾਨ ਗੇਟਵੇ ਏਕੀਕਰਣ ਦੀ ਲੋੜ ਹੈ।",
+                ai_assistant_title: "ਕ੍ਰਿਸ਼ੀ ਰਕਸ਼ਕ ਸਹਾਇਕ ਨਾਲ ਗੱਲ ਕਰੋ", ai_assistant_desc: "ਆਪਣੇ ਖੇਤ ਦੇ ਡੇਟਾ ਬਾਰੇ ਤੁਰੰਤ ਆਵਾਜ਼ ਸਲਾਹ ਪ੍ਰਾਪਤ ਕਰੋ।", call_assistant_button: "ਬ੍ਰਾਊਜ਼ਰ ਤੋਂ ਸਹਾਇਕ ਨੂੰ ਕਾਲ ਕਰੋ"
+            }
+        };
+
+        let currentLanguage = 'en';
+        let currentSlide = 0;
+
+        // --- CORE APP LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedRole = localStorage.getItem('userRole');
+            const savedLang = localStorage.getItem('userLang');
+            if (savedRole && savedLang) {
+                document.getElementById('language-select').value = savedLang;
+                setLanguage(savedLang, () => selectRole(savedRole));
+            }
+
+            document.getElementById('language-select').addEventListener('change', (event) => setLanguage(event.target.value));
+            document.getElementById('sidebar-toggle').addEventListener('click', toggleSidebar);
+            document.getElementById('sidebar-close').addEventListener('click', toggleSidebar);
+
+            document.getElementById('place-order-btn').addEventListener('click', () => showModal('order_supplies_modal_title', 'order_supplies_modal_body'));
+            document.getElementById('buy-scan-btn').addEventListener('click', () => showModal('buy_scan_modal_title', 'buy_scan_modal_body'));
+            document.getElementById('subscribe-btn').addEventListener('click', () => showModal('subscribe_modal_title', 'subscribe_modal_body'));
+            document.getElementById('sustainability-prev-btn').addEventListener('click', () => changeSlide(-1));
+            document.getElementById('sustainability-next-btn').addEventListener('click', () => changeSlide(1));
+            document.getElementById('retell-web-call-button').addEventListener('click', startRetellWebCall);
+        });
+
+        function setLanguage(lang, callback) {
+            currentLanguage = lang;
+            localStorage.setItem('userLang', lang);
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            if (callback) callback();
+        }
+
+        function selectRole(role) {
+            localStorage.setItem('userRole', role);
+            document.getElementById('selection-screen').classList.add('hidden');
+            document.getElementById('dashboards-container').classList.remove('hidden');
+            
+            const farmerDash = document.getElementById('farmer-dashboard');
+            const controllerDash = document.getElementById('controller-dashboard');
+            
+            farmerDash.classList.add('hidden');
+            controllerDash.classList.add('hidden');
+            
+            buildSidebar(role);
+
+            if (role === 'farmer') {
+                farmerDash.classList.remove('hidden');
+                document.getElementById('dashboard-title').setAttribute('data-lang-key', 'farmer_dashboard_title');
+                renderMarketChart();
+                renderQualityChart();
+            } else {
+                controllerDash.classList.remove('hidden');
+                document.getElementById('dashboard-title').setAttribute('data-lang-key', 'controller_dashboard_title');
+                renderControllerCharts();
+            }
+            setLanguage(currentLanguage);
+            setupSectionObserver();
+        }
+        
+        function logout() {
+            localStorage.clear();
+            window.location.reload();
+        }
+
+        function buildSidebar(role) {
+            const nav = document.getElementById('sidebar-nav');
+            nav.innerHTML = '';
+            const sections = role === 'farmer' ?
+                [
+                    { key: 'sidebar_weather', href: '#location-weather-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>' },
+                    { key: 'sidebar_market', href: '#market-prices-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>' },
+                    { key: 'sidebar_quality', href: '#crop-quality-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>' },
+                    { key: 'sidebar_orders', href: '#order-supplies-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>' },
+                    { key: 'ai_assistant_title', href: '#ai-assistant-call-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>'},
+                    { key: 'sidebar_kendras', href: '#nearby-kendras-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>' },
+                    { key: 'sidebar_sustainability', href: '#sustainability-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' },
+                    { key: 'sidebar_health', href: '#crop-health-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' },
+                ] :
+                [
+                    { key: 'sidebar_notifications', href: '#notifications-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>' },
+                    { key: 'sidebar_regional_farms', href: '#regional-farms-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>' },
+                    { key: 'sidebar_soil', href: '#soil-profile-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>' },
+                    { key: 'sidebar_field_health', href: '#field-health-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>' },
+                    { key: 'sidebar_input_usage', href: '#input-usage-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>' },
+                    { key: 'sidebar_ai_diagnosis', href: '#ai-diagnosis-section', icon: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>' },
+                ];
+            
+            sections.forEach(s => {
+                const link = document.createElement('a');
+                link.href = s.href;
+                link.className = 'sidebar-link flex items-center space-x-3 p-2 rounded-lg hover:bg-green-100';
+                link.innerHTML = `${s.icon}<span data-lang-key="${s.key}"></span>`;
+                link.onclick = (e) => { 
+                    e.preventDefault();
+                    document.querySelector(s.href).scrollIntoView({ behavior: 'smooth' });
+                    if (window.innerWidth < 768) toggleSidebar(); 
+                };
+                nav.appendChild(link);
+            });
+        }
+        
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        }
+
+        function setupSectionObserver() {
+            const sections = document.querySelectorAll('main section');
+            const navLinks = document.querySelectorAll('.sidebar-link');
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${entry.target.id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
+
+            sections.forEach(section => observer.observe(section));
+        }
+
+        // --- CHARTS ---
+        function renderMarketChart() {
+            const ctx = document.getElementById('marketChart').getContext('2d');
+            if (window.marketChartInstance) window.marketChartInstance.destroy();
+            window.marketChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Cotton Price (₹/Quintal)',
+                        data: [6800, 6850, 6900, 6870, 6950, 7000, 7020],
+                        borderColor: '#22c55e',
+                        tension: 0.1
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: true }
+            });
+        }
+
+        function renderQualityChart() {
+             const ctx = document.getElementById('qualityChart').getContext('2d');
+            if (window.qualityChartInstance) window.qualityChartInstance.destroy();
+            window.qualityChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['2021', '2022', '2023', '2024'],
+                    datasets: [{
+                        label: 'Yield (Quintals/Acre)',
+                        data: [8, 9, 8.5, 9.5],
+                        backgroundColor: '#a7f3d0'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: true, scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        function renderControllerCharts() {
+            const ntx = document.getElementById('nutrientChart').getContext('2d');
+            if(window.nutrientChartInstance) window.nutrientChartInstance.destroy();
+            window.nutrientChartInstance = new Chart(ntx, {
+                type: 'radar',
+                data: { labels: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'], datasets: [{ label: 'Nutrient Levels (Optimal=100)', data: [85, 65, 92], backgroundColor: 'rgba(34, 197, 94, 0.2)', borderColor: 'rgb(34, 197, 94)', borderWidth: 1 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { beginAtZero: true, max: 120 } } }
+            });
+
+            const ptx = document.getElementById('phMoistureChart').getContext('2d');
+            if(window.phChartInstance) window.phChartInstance.destroy();
+            window.phChartInstance = new Chart(ptx, {
+                type: 'bar',
+                data: { labels: ['Soil pH', 'Moisture (%)'], datasets: [{ label: 'Levels', data: [6.8, 45], backgroundColor: ['#FBBF24', '#3B82F6'] }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } }, indexAxis: 'y' }
+            });
+            
+            const htx = document.getElementById('healthChart').getContext('2d');
+            if(window.healthChartInstance) window.healthChartInstance.destroy();
+            window.healthChartInstance = new Chart(htx, {
+                type: 'doughnut',
+                data: { labels: ['Healthy', 'Water Stress', 'Pest Damage'], datasets: [{ data: [85, 10, 5], backgroundColor: ['#22C55E', '#F97316', '#EF4444'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }, title: { display: true, text: 'Overall Field Health Score' } } }
+            });
+            
+            const stx = document.getElementById('suitabilityChart').getContext('2d');
+            if(window.suitabilityChartInstance) window.suitabilityChartInstance.destroy();
+            window.suitabilityChartInstance = new Chart(stx, {
+                type: 'polarArea',
+                data: { labels: ['Cotton', 'Soybean', 'Wheat', 'Sugarcane'], datasets: [{ data: [95, 90, 60, 75], backgroundColor: ['#10B981', '#F59E0B', '#6366F1', '#EC4899'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }, title: { display: true, text: 'AI Crop Suitability Score' } } }
+            });
+
+            const utx = document.getElementById('usageChart').getContext('2d');
+            if(window.usageChartInstance) window.usageChartInstance.destroy();
+            window.usageChartInstance = new Chart(utx, {
+                type: 'line',
+                data: { labels: ['Jan', 'Feb', 'Mar', 'Apr'], datasets: [{ label: 'Water (kL)', data: [50, 55, 62, 58], borderColor: '#3B82F6', tension: 0.1 }, { label: 'Fertilizer (kg)', data: [20, 22, 25, 23], borderColor: '#F59E0B', tension: 0.1 }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // --- MAPS ---
+        function initMaps() {
+            const farmerMapDiv = document.getElementById('map');
+            const controllerMapDiv = document.getElementById('controller-map');
+            
+            if (farmerMapDiv) {
+                const farmLocation = { lat: 21.1458, lng: 79.0882 }; // Nagpur
+                const map = new google.maps.Map(farmerMapDiv, {
+                    zoom: 12,
+                    center: farmLocation,
+                });
+                new google.maps.Marker({
+                    position: farmLocation,
+                    map: map,
+                    title: "Your Farm",
+                });
+            }
+
+            if (controllerMapDiv) {
+                 const controllerCenter = { lat: 21.1458, lng: 79.0882 }; // Nagpur
+                 const map = new google.maps.Map(controllerMapDiv, {
+                    zoom: 9,
+                    center: controllerCenter,
+                });
+                const farms = [
+                    { lat: 21.1458, lng: 79.0882, title: "Farm #F789" },
+                    { lat: 21.2, lng: 79.1, title: "Farm #A123" },
+                    { lat: 21.0, lng: 79.0, title: "Farm #B456" }
+                ];
+                farms.forEach(farm => {
+                    new google.maps.Marker({
+                        position: farm,
+                        map: map,
+                        title: farm.title,
+                    });
+                });
+            }
+        }
+
+        // --- MODALS ---
+        const chatbotModal = document.getElementById('chatbot-modal');
+        const genericModal = document.getElementById('generic-modal');
+        function openChatbot() { chatbotModal.style.display = 'block'; setTimeout(() => chatbotModal.classList.add('show'), 10); }
+        function closeChatbot() { chatbotModal.classList.remove('show'); setTimeout(() => chatbotModal.style.display = 'none', 300); }
+        function showModal(titleKey, bodyKey) {
+            const modal = document.getElementById('generic-modal');
+            if (!modal) return;
+            document.getElementById('modal-title').textContent = translations[currentLanguage][titleKey] || titleKey;
+            document.getElementById('modal-body').textContent = translations[currentLanguage][bodyKey] || bodyKey;
+            modal.style.display = 'block';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+        function closeModal() {
+            const modal = document.getElementById('generic-modal');
+            if (!modal) return;
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        // --- SUSTAINABILITY SLIDER ---
+        function changeSlide(n) {
+            const slides = document.querySelectorAll("#sustainability-slider .sustainability-slide");
+            if (slides.length === 0) return;
+            
+            slides[currentSlide].classList.add("hidden");
+            currentSlide = (currentSlide + n + slides.length) % slides.length;
+            slides[currentSlide].classList.remove("hidden");
+        }
+        
+        // --- DATA EXPORT ---
+        function exportData(type) {
+            let data, filename;
+            if (type === 'soil') {
+                filename = 'soil_profile_export.csv';
+                data = [
+                    { Parameter: 'Nitrogen (N)', Value: 85, Unit: 'kg/ha' },
+                    { Parameter: 'Phosphorus (P)', Value: 65, Unit: 'kg/ha' },
+                    { Parameter: 'Potassium (K)', Value: 92, Unit: 'kg/ha' },
+                    { Parameter: 'Soil pH', Value: 6.8, Unit: '' },
+                    { Parameter: 'Moisture', Value: 45, Unit: '%' }
+                ];
+            } else {
+                alert('This data export is not yet configured.');
+                return;
+            }
+
+            const headers = Object.keys(data[0]);
+            const csvRows = [
+                headers.join(','),
+                ...data.map(row => headers.map(header => row[header]).join(','))
+            ];
+            const csvString = csvRows.join('\n');
+            
+            const a = document.createElement('a');
+            a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvString);
+            a.target = '_blank';
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // --- AI IMAGE ANALYSIS ---
+        async function handleImageAnalysis(role) { /* This is a mock function */ console.log("Image analysis initiated for", role); }
+        async function callOpenAIAPIMock() { /* This is a mock function */ }
+        
+        // --- RETELL WEB CALL LOGIC ---
+        const webClient = new RetellWebClient();
+        
+        function getFarmDataContext() {
+            const location = document.getElementById('farm-location')?.innerText || "Not available";
+            const weather = document.getElementById('farm-weather')?.innerText || "Not available";
+            const wind = document.getElementById('farm-wind')?.innerText || "Not available";
+            const soil = document.getElementById('farm-soil')?.innerText || "Not available";
+            const crops = document.getElementById('farm-crops')?.innerText || "Not available";
+            
+            const marketData = window.marketChartInstance.data.datasets[0].data;
+            const latestMarketPrice = marketData[marketData.length - 1];
+
+            const context = `Location: ${location}. Weather: ${weather}. Wind: ${wind}. Soil Type: ${soil}. Recommended Crops: ${crops}. Latest Cotton Price: ₹${latestMarketPrice} per quintal.`;
+            return context;
+        }
+
+        function startRetellWebCall() {
+            const agentId = RETELL_AGENT_ID; 
+            const farmContext = getFarmDataContext();
+
+            webClient.startConversation({
+                agentId: agentId,
+                callDetails: {
+                    title: "Krishi Rakshak Assistant",
+                    description: "Connecting you to your AI farming expert..."
+                },
+                metadata: {
+                    farm_data: farmContext
+                }
+            }).catch(console.error);
+        }
+
+        // --- GLOBAL EVENT LISTENERS ---
+        window.onclick = function(event) {
+            if (event.target == chatbotModal) closeChatbot();
+            if (event.target == genericModal) closeModal();
+        };
+        
+        window.initMaps = initMaps;
+    </script>
+</body>
+</html>
+
